@@ -1,0 +1,65 @@
+name: myapp
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.3+1
+
+environment:
+  sdk: ^3.8.0-278.1.beta
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.5.3
+  sqflite: ^2.4.2
+  path: ^1.9.1
+  flutter_svg: ^2.1.0
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+  fl_chart: ^0.71.0
+  pie_chart: ^5.4.0
+  animated_text_kit: ^4.2.3
+  event_bus: ^2.0.1
+  animations: ^2.0.11
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.14.3
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icon/icon.png
+    - assets/logo/cerdito.png
+    - assets/logo/cerdito_feliz.png
+    - assets/logo/cerdito_feliz_brillo.png
+    - assets/logo/cerdito_triste.png
+    - assets/logo/cerdito_cool.png
+    - 'assets/icons/options.svg'
+    - 'assets/icons/pay.svg'
+    - 'assets/icons/paid.svg'
+    - 'assets/icons/bar.svg'
+    - 'assets/icons/settings.svg'
+    - 'assets/icons/schedule.svg'
+    - 'assets/icons/categorias.svg'
+    - 'assets/icons/payments.svg'
+    - 'assets/icons/trash.svg'
+    - 'assets/icons/edit.svg'
+    - 'assets/icons/debt.svg'
+    - 'assets/icons/saving.svg'
+    - 'assets/icons/notifications.svg'
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: false
+  web: false
+  windows: false
+  macos: false
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "#FFA500"
+  min_sdk_android: 21
