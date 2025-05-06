@@ -47,6 +47,7 @@ class _EditCategoriesPageState extends State<EditCategoriesPage> {
 
   Future<void> _deleteCategory(String category) async {
     await CategoryDatabase.instance.deleteCategory(category, selectedType);
+    EventBus().notifyCategoriesUpdated();
     setState(() {
       categories[selectedType]!.remove(category);
     });

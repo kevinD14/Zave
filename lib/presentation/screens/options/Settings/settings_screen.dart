@@ -301,7 +301,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  'Zave v1.0.4 (16)',
+                  'Zave v1.0.4 (17)',
                   style: TextStyle(fontSize: 13, color: Colors.white54),
                 ),
               ),
