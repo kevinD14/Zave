@@ -9,7 +9,7 @@ Zave es una aplicación de finanzas personales desarrollada con Flutter que te p
 - Gestión de deudas con pagos parciales y estado de pago
 - Almacenamiento local con SQLite y shared_preferences
 
-# Capturas de pantalla
+## Capturas de pantalla
 
 <p float="left">
   <img src="https://github.com/user-attachments/assets/a25a59d0-0812-45eb-9a38-a84db28cd607" width="200" />
@@ -30,7 +30,7 @@ Zave es una aplicación de finanzas personales desarrollada con Flutter que te p
 - Flutter Charts (como fl_chart)
 - SVGs y diseño responsive
 
-# Cómo ejecutar el proyecto
+## Cómo ejecutar el proyecto
 
 1- Clona este repositorio:
 
