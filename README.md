@@ -1,5 +1,5 @@
 # Zave
-Zave es una aplicación de finanzas personales desarrollada con Flutter que te permite llevar un control detallado de tus ingresos, gastos, ahorros y deudas. Diseñada para ser intuitiva, visual y eficiente.
+Zave es una aplicación de finanzas personales desarrollada con Flutter que te permite llevar un control detallado de tus ingresos, gastos, y deudas. Diseñada para ser intuitiva, visual y eficiente.
 
 ## Características
 
