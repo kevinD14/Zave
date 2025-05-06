@@ -143,7 +143,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-
   void _confirmDelete(
     BuildContext context,
     String title,
@@ -264,33 +263,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 'Borrar todas las transacciones',
                 style: TextStyle(color: Colors.white),
               ),
-              onTap: () => _confirmDelete(
-                context,
-                'todas las transacciones',
-                () async {
-                  final navigator = Navigator.of(context);
-                  final messenger = ScaffoldMessenger.of(context);
+              onTap:
+                  () => _confirmDelete(
+                    context,
+                    'todas las transacciones',
+                    () async {
+                      final navigator = Navigator.of(context);
+                      final messenger = ScaffoldMessenger.of(context);
 
-                  await TransactionDB().deleteAllTransactions();
-                  EventBus().notifyTransactionsUpdated();
+                      await TransactionDB().deleteAllTransactions();
+                      EventBus().notifyTransactionsUpdated();
 
-                  if (!mounted) return;
+                      if (!mounted) return;
 
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        '¡Todas las transacciones han sido eliminadas!',
-                      ),
-                    ),
-                  );
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            '¡Todas las transacciones han sido eliminadas!',
+                          ),
+                        ),
+                      );
 
-                  await Future.delayed(const Duration(milliseconds: 600));
+                      await Future.delayed(const Duration(milliseconds: 600));
 
-                  if (mounted) {
-                    navigator.pushNamedAndRemoveUntil('/home', (route) => false);
-                  }
-                },
-              ),
+                      if (mounted) {
+                        navigator.pushNamedAndRemoveUntil(
+                          '/home',
+                          (route) => false,
+                        );
+                      }
+                    },
+                  ),
             ),
             const SizedBox(height: 320),
             const Padding(
@@ -298,7 +301,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  'Zave v1.0.4 (15)',
+                  'Zave v1.0.4 (16)',
                   style: TextStyle(fontSize: 13, color: Colors.white54),
                 ),
               ),

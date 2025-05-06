@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import 'package:myapp/utils/config/max_amount.dart';
 import 'package:myapp/utils/config/format_dates.dart';
 import 'package:myapp/utils/widgets/build_label.dart';
 import 'package:myapp/presentation/screens/transactions_all/details/funds_feedback_pages.dart';
+import 'package:myapp/presentation/screens/options/categories/edit_categories_screen.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Map<String, dynamic> transaction;
@@ -21,6 +23,7 @@ class EditTransactionScreen extends StatefulWidget {
 class _EditTransactionScreenState extends State<EditTransactionScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  StreamSubscription? _categorySubscription;
   String? _selectedCategory;
   DateTime? _selectedDate;
   bool _isButtonEnabled = false;
@@ -38,6 +41,9 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     _amountController.addListener(_updateButtonState);
     _updateButtonState();
     _loadCategories(tx['type']);
+    _categorySubscription = EventBus().onCategoriesUpdated.listen((event) {
+      _loadCategories(tx['type']);
+    });
   }
 
   Future<void> _loadCategories(String type) async {
@@ -138,6 +144,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   void dispose() {
     _amountController.dispose();
     _descriptionController.dispose();
+    _categorySubscription?.cancel();
     super.dispose();
   }
 
@@ -247,37 +254,68 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     ),
   );
 
-  Widget _buildCategoryDropdown() => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12),
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.secondary,
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: DropdownButtonFormField<String>(
-      value: _selectedCategory,
-      borderRadius: BorderRadius.circular(15),
-      dropdownColor: Theme.of(context).colorScheme.secondary,
-      iconEnabledColor: Theme.of(context).textTheme.bodyLarge?.color,
-      decoration: const InputDecoration(border: InputBorder.none),
-      hint: Text(
-        'Selecciona una categoría',
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150),
+  Widget _buildCategoryDropdown() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondary,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: DropdownButtonFormField<String>(
+              value: _selectedCategory,
+              borderRadius: BorderRadius.circular(15),
+              dropdownColor: Theme.of(context).colorScheme.secondary,
+              iconEnabledColor:
+                  _selectedCategory == null
+                      ? Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150)
+                      : Theme.of(context).textTheme.bodyLarge?.color,
+              decoration: const InputDecoration(border: InputBorder.none),
+              hint: Text(
+                'Selecciona una categoría',
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150),
+                ),
+              ),
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+                fontWeight: FontWeight.bold,
+              ),
+              items: _categories.map((category) {
+                return DropdownMenuItem(value: category, child: Text(category));
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedCategory = value;
+                });
+              },
+            ),
+          ),
         ),
-      ),
-      style: TextStyle(
-        color: Theme.of(context).textTheme.bodyLarge?.color,
-        fontWeight: FontWeight.bold,
-      ),
-      items:
-          _categories.map((category) {
-            return DropdownMenuItem(value: category, child: Text(category));
-          }).toList(),
-      onChanged: (value) {
-        setState(() => _selectedCategory = value);
-      },
-    ),
-  );
+        const SizedBox(width: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondary,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: IconButton(
+            icon: Icon(Icons.add, size: 20, color: Theme.of(context).textTheme.bodyLarge?.color,),
+            padding: EdgeInsets.zero,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent, 
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditCategoriesPage()),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildDatePicker() => GestureDetector(
     onTap: _selectDate,

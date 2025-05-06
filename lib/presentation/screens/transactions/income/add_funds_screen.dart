@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +10,7 @@ import 'package:myapp/utils/db/db_helper_transactions.dart';
 import 'package:myapp/utils/db/db_category.dart';
 import 'package:myapp/presentation/screens/transactions/income/funds_confirmation_page.dart';
 import 'package:myapp/presentation/screens/transactions/funds_rejected_page.dart';
+import 'package:myapp/presentation/screens/options/categories/edit_categories_screen.dart';
 
 class AddFundsPage extends StatefulWidget {
   const AddFundsPage({super.key});
@@ -20,6 +22,7 @@ class AddFundsPage extends StatefulWidget {
 class _AddFundsPageState extends State<AddFundsPage> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  StreamSubscription? _categorySubscription;
   String? _selectedCategory;
   DateTime? _selectedDate;
   bool _isButtonEnabled = false;
@@ -32,6 +35,9 @@ class _AddFundsPageState extends State<AddFundsPage> {
     _amountController.addListener(_updateButtonState);
     _selectedDate = DateTime.now();
     _loadCategories();
+    _categorySubscription = EventBus().onCategoriesUpdated.listen((event) {
+      _loadCategories();
+    });
   }
 
   Future<void> _loadCategories() async {
@@ -73,6 +79,7 @@ class _AddFundsPageState extends State<AddFundsPage> {
   void dispose() {
     _amountController.dispose();
     _descriptionController.dispose();
+    _categorySubscription?.cancel();
     super.dispose();
   }
 
@@ -194,41 +201,65 @@ class _AddFundsPageState extends State<AddFundsPage> {
   }
 
   Widget _buildCategoryDropdown() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: DropdownButtonFormField<String>(
-        value: _selectedCategory,
-        borderRadius: BorderRadius.circular(15),
-        dropdownColor: Theme.of(context).colorScheme.secondary,
-        iconEnabledColor:
-            _selectedCategory == null
-                ? Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150)
-                : Theme.of(context).textTheme.bodyLarge?.color,
-        decoration: const InputDecoration(border: InputBorder.none),
-        hint: Text(
-          'Selecciona una categoría',
-          style: TextStyle(
-            color: Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150),
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondary,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: DropdownButtonFormField<String>(
+              value: _selectedCategory,
+              borderRadius: BorderRadius.circular(15),
+              dropdownColor: Theme.of(context).colorScheme.secondary,
+              iconEnabledColor:
+                  _selectedCategory == null
+                      ? Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150)
+                      : Theme.of(context).textTheme.bodyLarge?.color,
+              decoration: const InputDecoration(border: InputBorder.none),
+              hint: Text(
+                'Selecciona una categoría',
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150),
+                ),
+              ),
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+                fontWeight: FontWeight.bold,
+              ),
+              items: _categories.map((category) {
+                return DropdownMenuItem(value: category, child: Text(category));
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedCategory = value;
+                });
+              },
+            ),
           ),
         ),
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyLarge?.color,
-          fontWeight: FontWeight.bold,
+        const SizedBox(width: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondary,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: IconButton(
+            icon: Icon(Icons.add, size: 20, color: Theme.of(context).textTheme.bodyLarge?.color,),
+            padding: EdgeInsets.zero,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent, 
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditCategoriesPage()),
+              );
+            },
+          ),
         ),
-        items:
-            _categories.map((category) {
-              return DropdownMenuItem(value: category, child: Text(category));
-            }).toList(),
-        onChanged: (value) {
-          setState(() {
-            _selectedCategory = value;
-          });
-        },
-      ),
+      ],
     );
   }
 

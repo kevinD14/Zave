@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/utils/db/db_category.dart';
+import 'package:myapp/utils/config/event_bus.dart';
 
 class EditCategoriesPage extends StatefulWidget {
   const EditCategoriesPage({super.key});
@@ -36,6 +37,7 @@ class _EditCategoriesPageState extends State<EditCategoriesPage> {
     if (newCategory.isNotEmpty &&
         !categories[selectedType]!.contains(newCategory)) {
       await CategoryDatabase.instance.insertCategory(newCategory, selectedType);
+      EventBus().notifyCategoriesUpdated();
       setState(() {
         categories[selectedType]!.add(newCategory);
         _controller.clear();
