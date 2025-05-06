@@ -30,3 +30,21 @@ Zave es una aplicación de finanzas personales desarrollada con Flutter que te p
 - Flutter Charts (como fl_chart)
 - SVGs y diseño responsive
 
+# Cómo ejecutar el proyecto
+
+1- Clona este repositorio:
+
+`git clone https://github.com/KirbyNx64/zave.git`
+
+2- Entra al directorio del proyecto:
+
+`cd zave`
+
+3- Instala las dependencias:
+
+`flutter pub get`
+
+4- Ejecuta la app:
+
+`flutter run`
+
