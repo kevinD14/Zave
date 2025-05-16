@@ -12,14 +12,14 @@ Zave es una aplicación de finanzas personales desarrollada con Flutter que te p
 ## Capturas de pantalla
 
 <p align="center">
-  <img src="assets/screenshots/img1.png" width="30%">
-  <img src="assets/screenshots/img2.png" width="30%">
-  <img src="assets/screenshots/img3.png" width="30%">
+  <img src="assets/screenshots/img1.jpg" width="30%">
+  <img src="assets/screenshots/img2.jpg" width="30%">
+  <img src="assets/screenshots/img3.jpg" width="30%">
 </p>
 <p align="center">
-  <img src="assets/screenshots/img4.png" width="30%">
-  <img src="assets/screenshots/img5.png" width="30%">
-  <img src="assets/screenshots/img6.png" width="30%">
+  <img src="assets/screenshots/img4.jpg" width="30%">
+  <img src="assets/screenshots/img 5.jpg" width="30%">
+  <img src="assets/screenshots/img6.jpg" width="30%">
 </p>
 
 ## Tecnologías utilizadas
