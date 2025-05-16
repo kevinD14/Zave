@@ -34,7 +34,7 @@ Zave es una aplicación de finanzas personales desarrollada con Flutter que te p
 
 1- Clona este repositorio:
 
-`git clone https://github.com/KirbyNx64/zave.git`
+`git clone https://github.com/kevinD14/Zave.git`
 
 2- Entra al directorio del proyecto:
 
@@ -48,3 +48,6 @@ Zave es una aplicación de finanzas personales desarrollada con Flutter que te p
 
 `flutter run`
 
+Importante: Para que la app funcione correctamente con Firebase, necesitas añadir el archivo google-services.json en la ruta android/app/ de tu proyecto.
+Este archivo no está incluido en el repositorio por razones de seguridad.
+Obténlo desde tu consola de Firebase y colócalo en la carpeta mencionada.
