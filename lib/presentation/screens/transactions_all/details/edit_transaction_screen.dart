@@ -11,7 +11,9 @@ import 'package:myapp/utils/widgets/build_label.dart';
 import 'package:myapp/presentation/screens/transactions_all/details/funds_feedback_pages.dart';
 import 'package:myapp/presentation/screens/options/categories/edit_categories_screen.dart';
 
+/// Pantalla para editar una transacción existente.
 class EditTransactionScreen extends StatefulWidget {
+  /// Transacción que se va a editar (contiene los datos actuales).
   final Map<String, dynamic> transaction;
 
   const EditTransactionScreen({super.key, required this.transaction});
@@ -20,37 +22,52 @@ class EditTransactionScreen extends StatefulWidget {
   State<EditTransactionScreen> createState() => _EditTransactionScreenState();
 }
 
+/// Estado asociado a la pantalla de edición de transacción.
 class _EditTransactionScreenState extends State<EditTransactionScreen> {
+  /// Controlador para el campo de monto.
   final TextEditingController _amountController = TextEditingController();
+  /// Controlador para el campo de descripción.
   final TextEditingController _descriptionController = TextEditingController();
+  /// Suscripción para escuchar actualizaciones de categorías.
   StreamSubscription? _categorySubscription;
+  /// Categoría seleccionada actualmente.
   String? _selectedCategory;
+  /// Fecha seleccionada actualmente.
   DateTime? _selectedDate;
+  /// Indica si el botón de guardar está habilitado.
   bool _isButtonEnabled = false;
 
+  /// Lista de categorías disponibles.
   List<String> _categories = [];
 
   @override
   void initState() {
+    // Inicializa los campos con los datos de la transacción recibida.
+    // También configura los listeners y carga las categorías.
     super.initState();
     final tx = widget.transaction;
     _amountController.text = tx['amount'].toString();
     _descriptionController.text = tx['description'] ?? '';
     _selectedCategory = tx['category'];
     _selectedDate = DateFormat('dd/MM/yyyy').parse(tx['date']);
+    // Actualiza el estado del botón cuando cambia el monto.
     _amountController.addListener(_updateButtonState);
     _updateButtonState();
     _loadCategories(tx['type']);
+    // Escucha eventos para recargar categorías si hay cambios.
     _categorySubscription = EventBus().onCategoriesUpdated.listen((event) {
       _loadCategories(tx['type']);
     });
   }
 
+  /// Carga la lista de categorías según el tipo de transacción.
   Future<void> _loadCategories(String type) async {
     final categories = await CategoryDatabase.instance.fetchCategories(type);
     setState(() {
       _categories = categories;
+      // Siempre agrega la categoría "Otros" si no está presente.
       if (!_categories.contains('Otros')) _categories.add('Otros');
+      // Si la transacción es de tipo "Balance inicial" y no está en la lista, la agrega.
       if (widget.transaction['category'] == 'Balance inicial' &&
           !_categories.contains('Balance inicial')) {
         _categories.add('Balance inicial');
@@ -58,6 +75,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     });
   }
 
+  /// Habilita o deshabilita el botón de guardar según el monto ingresado.
   void _updateButtonState() {
     final text = _amountController.text.trim();
     final amount = double.tryParse(text);
@@ -66,6 +84,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     });
   }
 
+  /// Guarda los cambios realizados en la transacción, validando los datos y mostrando feedback.
   Future<void> _saveChanges() async {
     final amountText = _amountController.text.trim();
     final amount = double.tryParse(amountText);

@@ -4,6 +4,7 @@ import 'package:myapp/presentation/screens/home/widgets/home_appbar.dart';
 import 'package:myapp/presentation/screens/home/widgets/home_box.dart';
 import 'package:myapp/presentation/screens/home/widgets/home_balance.dart';
 
+// Widget de página principal que contiene la estructura general de la pantalla de inicio
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -12,30 +13,34 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+  with SingleTickerProviderStateMixin {
+  // Controlador de animación para gestionar animaciones en la página
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
+
+    // Inicializa el controlador de animación con duración de 600ms
     _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
+      vsync: this, // Usamos el tickerProvider de este widget para las animaciones
+      duration: const Duration(milliseconds: 600), // Duración de la animación
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller.dispose(); // Liberamos el controlador de animación al destruir el widget
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope<Object?>(
-      canPop: false,
+      canPop: false, // Deshabilita la capacidad de hacer pop (volver a la pantalla anterior)
       onPopInvokedWithResult: (bool didPop, Object? result) async {
         if (didPop) return;
+        // Muestra un cuadro de diálogo de confirmación cuando el usuario intenta salir
         final shouldExit = await showDialog<bool>(
           context: context,
           builder:
@@ -60,7 +65,7 @@ class HomePageState extends State<HomePage>
               ),
         );
         if (shouldExit == true) {
-          SystemNavigator.pop();
+          SystemNavigator.pop(); // Cierra la app si el usuario confirma salir
         }
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -73,17 +78,12 @@ class HomePageState extends State<HomePage>
         ),
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.secondary,
-          appBar: CustomHomeAppBar(),
+          appBar: CustomHomeAppBar(), // Barra de navegación personalizada
           body: Column(
             children: [
-              BalanceCard(),
+              BalanceCard(), // Widget que muestra el balance
               Expanded(
-                child: GreenBox(
-                  onTransactionsChanged: () {
-                    if (!mounted) return;
-                    setState(() {});
-                  },
-                ),
+                child: const GreenBox(), // Widget principal de la pantalla con la caja
               ),
             ],
           ),

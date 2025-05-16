@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myapp/utils/db/db_helper_transactions.dart';
 import 'package:myapp/utils/config/event_bus.dart';
 
+// Widget con estado que representa una tarjeta de balance de la app
 class BalanceCard extends StatefulWidget {
   const BalanceCard({super.key});
 
@@ -16,23 +17,26 @@ class _BalanceCardState extends State<BalanceCard> {
   double _ingresos = 0;
   double _gastos = 0;
   bool _isVisible = true;
-  final NumberFormat _numberFormat = NumberFormat("#,##0.00", "en_US");
+  final NumberFormat _numberFormat = NumberFormat("#,##0.00", "en_US"); // Formato de número
 
   @override
   void initState() {
     super.initState();
-    _loadBalanceFromDatabase();
-    _loadVisibilityPreference();
+    _loadBalanceFromDatabase(); // Cargar datos de balance al iniciar
+    _loadVisibilityPreference(); // Cargar preferencia de visibilidad
 
+    // Suscribirse al evento que indica que las transacciones han cambiado
     EventBus().onTransactionsUpdated.listen((_) => _loadBalanceFromDatabase());
   }
 
+  // Cargar el balance desde la base de datos
   Future<void> _loadBalanceFromDatabase() async {
     final transactions = await TransactionDB().getAllTransactions();
 
     double ingresos = 0;
     double gastos = 0;
 
+    // Calcular ingresos y gastos en base a las transacciones
     for (var transaction in transactions) {
       final tipo = transaction['type'];
       final rawMonto = transaction['amount'];
@@ -54,6 +58,7 @@ class _BalanceCardState extends State<BalanceCard> {
     }
   }
 
+  // Cargar si el usuario quiere mostrar u ocultar el balance
   Future<void> _loadVisibilityPreference() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -61,6 +66,7 @@ class _BalanceCardState extends State<BalanceCard> {
     });
   }
 
+  // Cambiar la visibilidad del balance y guardar la preferencia
   Future<void> _toggleVisibility() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -69,6 +75,7 @@ class _BalanceCardState extends State<BalanceCard> {
     await prefs.setBool('balanceVisible', _isVisible);
   }
 
+  // Formatear cantidades con tope de visualización
   String _formatAmountCapped(double amount) {
     if (amount > 9999.99) {
       return '9,999+';
@@ -78,6 +85,7 @@ class _BalanceCardState extends State<BalanceCard> {
 
   @override
   Widget build(BuildContext context) {
+    // Mostrar indicador de carga mientras se obtienen los datos
     if (_balance == null) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -105,6 +113,8 @@ class _BalanceCardState extends State<BalanceCard> {
                       ),
                     ),
                     const SizedBox(width: 8),
+
+                    // Botón para ocultar o mostrar el balance
                     GestureDetector(
                       onTap: _toggleVisibility,
                       child: Icon(
@@ -118,6 +128,8 @@ class _BalanceCardState extends State<BalanceCard> {
                   ],
                 ),
                 const SizedBox(height: 8),
+
+                // Monto del balance o asteriscos si está oculto
                 Text(
                   _isVisible ? '\$${_numberFormat.format(_balance)}' : '******',
                   style: TextStyle(
@@ -129,6 +141,8 @@ class _BalanceCardState extends State<BalanceCard> {
               ],
             ),
           ),
+
+          // Columna derecha: resumen de ingresos y gastos
           Transform.translate(
             offset: const Offset(10.0, 0.0),
             child: Padding(

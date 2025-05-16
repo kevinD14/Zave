@@ -4,23 +4,29 @@ import 'package:myapp/utils/db/db_helper_transactions.dart';
 import 'package:myapp/utils/config/filter_grf.dart';
 import 'package:myapp/presentation/screens/options/summary/summary_screen.dart';
 
+// Widget de gráfico de pastel para mostrar los gastos por categoría
 class IncomeChart extends StatelessWidget {
-  final FilterType filter;
+  final FilterType
+  filter; // Filtro de tiempo (por ejemplo: diario, semanal, mensual)
 
   const IncomeChart({super.key, required this.filter});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
+      // Obtiene las transacciones filtradas según el tipo de filtro (string)
       future: getTransactionsFiltered(filter.toString().split('.').last),
       builder: (context, snapshot) {
+        // Muestra un indicador de carga mientras se esperan los datos
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
 
         final transactions = snapshot.data!;
-        final incomeCategories = <String, double>{};
+        final incomeCategories =
+            <String, double>{}; // Mapa para acumular totales por categoría
 
+        // Agrupa y suma los gastos por categoría
         for (var tx in transactions) {
           if (tx['type'] == 'ingresos') {
             final category = tx['category'];
@@ -31,6 +37,7 @@ class IncomeChart extends StatelessWidget {
           }
         }
 
+        // Si no hay gastos registrados, muestra un mensaje
         if (incomeCategories.isEmpty) {
           return Center(
             child: Text(
@@ -42,41 +49,44 @@ class IncomeChart extends StatelessWidget {
           );
         }
 
-        final sortedCategories =
-            incomeCategories.entries.toList()
-              ..sort((a, b) => b.value.compareTo(a.value));
+        // Ordena las categorías de mayor a menor gasto
+        final sortedCategories = incomeCategories.entries.toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
 
+        // Toma las 5 primeras categorías con más gasto
         final topCategories = sortedCategories.take(5).toList();
 
+        // Suma el resto de las categorías para mostrar como "Otras"
         final otherCategoriesTotal = sortedCategories
             .skip(5)
             .fold(0.0, (sum, entry) => sum + entry.value);
 
+        // Si hay otras categorías, se agrega como una entrada más
         if (otherCategoriesTotal > 0) {
           topCategories.add(MapEntry("Otras categorías", otherCategoriesTotal));
         }
 
+        // Suma total de los gastos (para calcular porcentajes)
         final total = topCategories.fold(
           0.0,
           (sum, entry) => sum + entry.value,
         );
 
-        final sections =
-            topCategories.map((entry) {
-              final percentage = ((entry.value / total) * 100).toStringAsFixed(
-                1,
-              );
-              return PieChartSectionData(
-                value: entry.value,
-                color: _getCategoryColor(entry.key),
-                title: '$percentage%',
-                titleStyle: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                  fontWeight: FontWeight.bold,
-                ),
-              );
-            }).toList();
+        // Secciones del gráfico de pastel
+        final sections = topCategories.map((entry) {
+          final percentage = ((entry.value / total) * 100).toStringAsFixed(1);
+          return PieChartSectionData(
+            value: entry.value,
+            color: _getCategoryColor(entry.key), // Color generado por categoría
+            title: '$percentage%',
+            titleStyle: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+              fontWeight: FontWeight.bold,
+            ),
+          );
+        }).toList();
 
+        // UI final del gráfico
         return Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -87,6 +97,7 @@ class IncomeChart extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                // Título del gráfico
                 Text(
                   "Ingresos por Categoría",
                   style: TextStyle(
@@ -96,6 +107,8 @@ class IncomeChart extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
+
+                // Gráfico de pastel
                 AspectRatio(
                   aspectRatio: 1.4,
                   child: PieChart(
@@ -107,16 +120,17 @@ class IncomeChart extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
+
+                // Leyenda de categorías (color + nombre)
                 Wrap(
                   spacing: 15,
                   runSpacing: 8,
-                  children:
-                      topCategories.map((e) {
-                        return _Legend(
-                          color: _getCategoryColor(e.key),
-                          label: e.key,
-                        );
-                      }).toList(),
+                  children: topCategories.map((e) {
+                    return _Legend(
+                      color: _getCategoryColor(e.key),
+                      label: e.key,
+                    );
+                  }).toList(),
                 ),
               ],
             ),
@@ -126,17 +140,21 @@ class IncomeChart extends StatelessWidget {
     );
   }
 
+  // Método para obtener transacciones filtradas por rango de fecha
   Future<List<Map<String, dynamic>>> getTransactionsFiltered(
     String filterType,
   ) async {
     final db = await TransactionDB().database;
 
+    // Obtiene el rango de fechas a partir del tipo de filtro
     final dateRange = FilterUtils.getDateRange(filterType);
     final start = dateRange['start']!;
     final end = dateRange['end']!;
 
+    // Consulta todas las transacciones
     final result = await db.query('transactions', orderBy: 'date DESC');
 
+    // Filtra solo las que estén dentro del rango de fechas
     return result.where((tx) {
       final dateStr = tx['date'] as String;
       final dateParts = dateStr.split('/');
@@ -155,6 +173,7 @@ class IncomeChart extends StatelessWidget {
     return "${parts[2]}-${parts[1]}-${parts[0]}";
   }
 
+  // Genera un color único para cada categoría según su nombre
   Color _getCategoryColor(String category) {
     final hash = category.codeUnits.fold(0, (prev, elem) => prev + elem);
     final hue = (hash * 37) % 360;
@@ -162,6 +181,7 @@ class IncomeChart extends StatelessWidget {
   }
 }
 
+// Widget auxiliar para mostrar una leyenda con color y nombre de categoría
 class _Legend extends StatelessWidget {
   final Color color;
   final String label;

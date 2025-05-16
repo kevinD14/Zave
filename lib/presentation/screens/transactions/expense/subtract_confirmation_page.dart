@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// Página de confirmación que se muestra después de registrar un gasto.
 class ExpenseConfirmationPage extends StatelessWidget {
-  final double amountAdded;
+  final double
+  amountAdded; // Monto del gasto registrado, pasado como argumento.
 
   const ExpenseConfirmationPage({super.key, required this.amountAdded});
 

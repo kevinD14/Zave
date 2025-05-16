@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Página de confirmación que se muestra después de registrar un ingreso.
 class FundsConfirmationPage extends StatelessWidget {
   final double amountAdded;
 
@@ -30,7 +31,7 @@ class FundsConfirmationPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              '¡Fondos añadidos!',
+              '¡Ingreso añadido!',
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 28,

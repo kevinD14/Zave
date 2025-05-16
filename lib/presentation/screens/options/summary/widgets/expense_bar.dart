@@ -4,23 +4,28 @@ import 'package:myapp/utils/db/db_helper_transactions.dart';
 import 'package:myapp/utils/config/filter_grf.dart';
 import 'package:myapp/presentation/screens/options/summary/summary_screen.dart';
 
+// Widget principal que muestra un gráfico de barras de los gastos por categoría
 class ExpenseBarChart extends StatelessWidget {
-  final FilterType filter;
+  final FilterType filter; // Filtro temporal (semanal, mensual, etc.)
 
   const ExpenseBarChart({super.key, required this.filter});
 
   @override
   Widget build(BuildContext context) {
+    // FutureBuilder para construir el gráfico una vez cargadas las transacciones filtradas
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: getTransactionsFiltered(filter),
       builder: (context, snapshot) {
+        // Mientras se cargan los datos
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
 
+        // Lista de transacciones ya filtradas
         final transactions = snapshot.data!;
         final expenseCategories = <String, double>{};
 
+        // Acumulación de gastos por categoría
         for (var tx in transactions) {
           if (tx['type'] == 'gastos') {
             final category = tx['category'];
@@ -30,14 +35,17 @@ class ExpenseBarChart extends StatelessWidget {
           }
         }
 
+        // Si no hay gastos registrados, muestra una caja vacía
         if (expenseCategories.isEmpty) {
           return const Center(child: Text(" "));
         }
 
+        // Ordena las categorías por monto de mayor a menor
         final sorted =
             expenseCategories.entries.toList()
               ..sort((a, b) => b.value.compareTo(a.value));
 
+        // Toma las 5 categorías más altas y agrupa el resto en "Otras categorías"
         final top5 = sorted.take(5).toList();
         final othersTotal = sorted
             .skip(5)
@@ -47,6 +55,7 @@ class ExpenseBarChart extends StatelessWidget {
           top5.add(MapEntry("Otras categorías", othersTotal));
         }
 
+        // Genera los datos para el gráfico de barras
         final barChartGroups =
             top5.asMap().entries.map((entry) {
               final index = entry.key;
@@ -66,6 +75,7 @@ class ExpenseBarChart extends StatelessWidget {
               );
             }).toList();
 
+        // Construye el gráfico y su leyenda dentro de una tarjeta
         return Card(
           key: const PageStorageKey('expense_chart'),
           shape: RoundedRectangleBorder(
@@ -107,6 +117,8 @@ class ExpenseBarChart extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
+
+                // Leyenda con colores y nombres de categorías
                 Wrap(
                   spacing: 15,
                   runSpacing: 8,
@@ -126,18 +138,23 @@ class ExpenseBarChart extends StatelessWidget {
     );
   }
 
+  // Método que obtiene y filtra las transacciones según el filtro temporal
   Future<List<Map<String, dynamic>>> getTransactionsFiltered(
     FilterType filterType,
   ) async {
     final db = await TransactionDB().database;
+
+    // Obtiene el rango de fechas para el filtro (por ejemplo, esta semana)
     final dateRange = FilterUtils.getDateRange(
       filterType.toString().split('.').last,
     );
     DateTime start = dateRange['start']!;
     DateTime end = dateRange['end']!;
 
+    // Consulta todas las transacciones ordenadas por fecha descendente
     final result = await db.query('transactions', orderBy: 'date DESC');
 
+    // Filtra solo las que están dentro del rango de fechas
     return result.where((tx) {
       final dateStr = tx['date'] as String;
       final parts = dateStr.split('/');
@@ -151,6 +168,7 @@ class ExpenseBarChart extends StatelessWidget {
     }).toList();
   }
 
+  // Calcula el valor máximo del eje Y del gráfico, redondeado al siguiente múltiplo de 100
   double _calculateMaxY(List<BarChartGroupData> barChartGroups) {
     double maxValue = 0;
     for (var group in barChartGroups) {
@@ -163,6 +181,7 @@ class ExpenseBarChart extends StatelessWidget {
     return (maxValue / 100).ceil() * 100.0;
   }
 
+  // Genera un color único para cada categoría basado en su nombre
   Color _getCategoryColor(String category) {
     final hash = category.codeUnits.fold(0, (prev, elem) => prev + elem);
     final hue = (hash * 37) % 360;
@@ -170,6 +189,7 @@ class ExpenseBarChart extends StatelessWidget {
   }
 }
 
+// Widget auxiliar para mostrar una leyenda con color y nombre de categoría
 class _Legend extends StatelessWidget {
   final Color color;
   final String label;

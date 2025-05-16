@@ -3,13 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:myapp/presentation/screens/home/widgets/box/widgets/home_transactions_list.dart';
 import 'package:myapp/presentation/screens/transactions_all/transactions_list_screen.dart';
 
+// Widget que representa la sección de "Últimas transacciones" en la pantalla de inicio
 class LastTransactionsSection extends StatelessWidget {
-  final VoidCallback? onTransactionsChanged;
-  const LastTransactionsSection({super.key, this.onTransactionsChanged});
+  const LastTransactionsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Obtiene el espacio inferior del teclado si está visible
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
+    // Obtiene el tema actual para aplicar estilos
     final theme = Theme.of(context);
 
     return SingleChildScrollView(
@@ -19,6 +22,8 @@ class LastTransactionsSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
+            // Fila con el título y el botón "Ver todas"
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -33,6 +38,8 @@ class LastTransactionsSection extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+
+                // Botón que navega a la pantalla de todas las transacciones
                 TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: theme.colorScheme.secondary,
@@ -46,15 +53,14 @@ class LastTransactionsSection extends StatelessWidget {
                   ),
                   onPressed: () async {
                     HapticFeedback.lightImpact();
-                    final result = await Navigator.push(
+
+                    // Navegación a la pantalla de todas las transacciones
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const AllTransactionsPage(),
                       ),
                     );
-                    if (result == true && onTransactionsChanged != null) {
-                      onTransactionsChanged!();
-                    }
                   },
                   child: Text(
                     'Ver todas',
@@ -68,6 +74,8 @@ class LastTransactionsSection extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
+
+            // Contenedor con fondo y bordes redondeados donde se muestra la lista
             Center(
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.9,
@@ -76,6 +84,8 @@ class LastTransactionsSection extends StatelessWidget {
                   color: theme.colorScheme.secondary,
                   borderRadius: BorderRadius.circular(20),
                 ),
+
+                // Widget que muestra la lista de transacciones recientes
                 child: const TransactionsList(),
               ),
             ),

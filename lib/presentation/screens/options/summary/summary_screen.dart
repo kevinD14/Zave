@@ -8,8 +8,10 @@ import 'package:myapp/presentation/screens/options/summary/widgets/income_transf
 import 'package:myapp/presentation/screens/options/summary/widgets/expense_transfer.dart';
 import 'package:myapp/presentation/screens/options/summary/widgets/card_summary.dart';
 
+// Enum que define los tipos de filtros disponibles para mostrar los datos
 enum FilterType { hoy, semana, mes, seisMeses, general }
 
+// Pantalla principal del resumen completo
 class SummaryScreen extends StatefulWidget {
   const SummaryScreen({super.key});
 
@@ -19,13 +21,17 @@ class SummaryScreen extends StatefulWidget {
 
 class _SummaryScreenState extends State<SummaryScreen>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = 0;
-  FilterType _selectedFilter = FilterType.general;
-  late final AnimationController _controller;
+  int _selectedIndex = 0; // Índice para alternar entre ingresos y gastos
+  FilterType _selectedFilter =
+      FilterType.general; // Filtro de tiempo seleccionado
+  late final AnimationController
+  _controller; // Controlador para la animación del botón de recarga
 
   @override
   void initState() {
     super.initState();
+
+    // Inicializa el controlador de animación con una duración de 500ms
     _controller = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -34,26 +40,28 @@ class _SummaryScreenState extends State<SummaryScreen>
 
   @override
   void dispose() {
+    // Libera los recursos del controlador de animación al destruir el widget
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bgColor =
-        Theme.of(context).brightness == Brightness.dark
-            ? const Color(0xFF232525)
-            : Colors.white;
+    // Define el color de fondo según el tema actual (oscuro o claro)
+    final bgColor = Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFF232525)
+        : Colors.white;
 
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
         title: const Text("Resumen completo"),
         actions: [
+          // Botón de recarga con animación de rotación
           IconButton(
             onPressed: () async {
-              await _controller.forward(from: 0);
-              setState(() {});
+              await _controller.forward(from: 0); // Ejecuta animación
+              setState(() {}); // Refresca la pantalla
             },
             icon: AnimatedBuilder(
               animation: _controller,
@@ -71,7 +79,7 @@ class _SummaryScreenState extends State<SummaryScreen>
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const BalanceCard(),
+            const BalanceCard(), // Tarjeta que muestra el balance general
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ToggleButtons(
@@ -101,14 +109,14 @@ class _SummaryScreenState extends State<SummaryScreen>
               ),
             ),
 
+            // Menú desplegable para seleccionar el filtro de tiempo
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Theme.of(context).colorScheme.secondary
-                          : Colors.white,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Theme.of(context).colorScheme.secondary
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Padding(
@@ -117,8 +125,8 @@ class _SummaryScreenState extends State<SummaryScreen>
                     child: DropdownButton<FilterType>(
                       dropdownColor:
                           Theme.of(context).brightness == Brightness.dark
-                              ? Theme.of(context).colorScheme.secondary
-                              : Colors.white,
+                          ? Theme.of(context).colorScheme.secondary
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       value: _selectedFilter,
                       onChanged: (newValue) {
@@ -129,16 +137,18 @@ class _SummaryScreenState extends State<SummaryScreen>
                         }
                       },
                       isExpanded: true,
-                      iconEnabledColor:
-                          Theme.of(context).textTheme.bodyLarge?.color,
+                      iconEnabledColor: Theme.of(
+                        context,
+                      ).textTheme.bodyLarge?.color,
                       items: [
                         DropdownMenuItem(
                           value: FilterType.hoy,
                           child: Text(
                             "Hoy",
                             style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.color,
                             ),
                           ),
                         ),
@@ -147,8 +157,9 @@ class _SummaryScreenState extends State<SummaryScreen>
                           child: Text(
                             "Esta semana (Lunes - Domingo)",
                             style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.color,
                             ),
                           ),
                         ),
@@ -157,8 +168,9 @@ class _SummaryScreenState extends State<SummaryScreen>
                           child: Text(
                             "Últimos 30 días",
                             style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.color,
                             ),
                           ),
                         ),
@@ -167,8 +179,9 @@ class _SummaryScreenState extends State<SummaryScreen>
                           child: Text(
                             "Últimos 6 meses",
                             style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.color,
                             ),
                           ),
                         ),
@@ -177,8 +190,9 @@ class _SummaryScreenState extends State<SummaryScreen>
                           child: Text(
                             "General",
                             style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyLarge?.color,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.color,
                             ),
                           ),
                         ),
@@ -188,6 +202,7 @@ class _SummaryScreenState extends State<SummaryScreen>
                 ),
               ),
             ),
+            // Sección de contenido dinámico según la pestaña activa (ingresos o gastos)
             if (_selectedIndex == 0) ...[
               IncomeChart(filter: _selectedFilter),
               IncomeBarChart(filter: _selectedFilter),

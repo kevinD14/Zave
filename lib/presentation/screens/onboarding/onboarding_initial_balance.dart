@@ -6,6 +6,7 @@ import 'package:myapp/utils/db/db_helper_transactions.dart';
 import 'package:myapp/utils/config/max_amount.dart';
 import 'package:myapp/presentation/screens/onboarding/onboarding_end.dart';
 
+// Pantalla para ingresar el balance inicial
 class BalanceScreen extends StatefulWidget {
   const BalanceScreen({super.key});
 
@@ -17,10 +18,12 @@ class _BalanceScreenState extends State<BalanceScreen> {
   final TextEditingController _balanceController = TextEditingController();
   bool _isButtonEnabled = false;
 
+  // Guarda el balance y navega a la siguiente pantalla
   Future<void> _saveBalanceAndNavigate() async {
     final text = _balanceController.text.trim();
     if (text.isEmpty) return;
 
+    // Intenta convertir el texto a número decimal
     final double? balance = double.tryParse(text);
     if (balance == null) {
       if (mounted) {
@@ -33,6 +36,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
       return;
     }
 
+    // Si es un balance válido (mayor a 0.01), se registra como ingreso inicial
     if (balance >= 0.01) {
       final DateTime now = DateTime.now();
       final String formattedDate =
@@ -48,9 +52,11 @@ class _BalanceScreenState extends State<BalanceScreen> {
       );
     }
 
+    // Marca que el onboarding ya fue completado
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('seenOnboarding', true);
 
+    // Navega a la pantalla final del onboarding
     if (mounted) {
       Navigator.pushReplacement(
         context,
@@ -97,6 +103,8 @@ class _BalanceScreenState extends State<BalanceScreen> {
                 ),
               ),
               const SizedBox(height: 30),
+
+              // Campo de texto para ingresar el balance
               TextField(
                 controller: _balanceController,
                 maxLength: 10,
@@ -107,11 +115,13 @@ class _BalanceScreenState extends State<BalanceScreen> {
                   fontWeight: FontWeight.bold,
                 ),
                 onChanged: (value) {
+                  // Habilita el botón si hay algo escrito
                   setState(() {
                     _isButtonEnabled = value.trim().isNotEmpty;
                   });
                 },
                 inputFormatters: [
+                  // Solo permite números y hasta 2 decimales
                   FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                   MaxAmountFormatter(),
                 ],
@@ -140,6 +150,8 @@ class _BalanceScreenState extends State<BalanceScreen> {
                 ),
               ),
               const SizedBox(height: 30),
+
+              // Botón para continuar
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

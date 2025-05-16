@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// Pantalla que se muestra cuando una transacción es rechazada por exceder los límites permitidos.
 class FundsRejectedPage extends StatelessWidget {
+  /// Indica si la transacción rechazada es un ingreso (true) o un gasto/deuda (false).
   final bool isIncome;
 
+  /// Constructor que recibe si la transacción es ingreso o gasto.
   const FundsRejectedPage({super.key, required this.isIncome});
 
   @override
@@ -20,11 +23,14 @@ class FundsRejectedPage extends StatelessWidget {
         ),
       ),
       body: Center(
+        // Contiene el contenido principal centrado verticalmente.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Ícono de error para indicar rechazo.
             const Icon(Icons.error_outline, color: Colors.white, size: 100),
             const SizedBox(height: 20),
+            // Título de la pantalla.
             const Text(
               'Transacción rechazada',
               style: TextStyle(
@@ -34,6 +40,7 @@ class FundsRejectedPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            // Mensaje que indica el motivo del rechazo según el tipo.
             Text(
               isIncome
                   ? 'El balance no puede superar los \$9,999.99'
@@ -41,6 +48,7 @@ class FundsRejectedPage extends StatelessWidget {
               style: const TextStyle(color: Colors.white, fontSize: 14),
             ),
             const SizedBox(height: 50),
+            // Botón para volver a intentar la operación.
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.tertiary,
@@ -53,6 +61,7 @@ class FundsRejectedPage extends StatelessWidget {
                 ),
               ),
               onPressed: () {
+                // Vuelve a la pantalla anterior.
                 Navigator.pop(context);
               },
               child: const Text(
@@ -67,7 +76,9 @@ class FundsRejectedPage extends StatelessWidget {
   }
 }
 
+/// Pantalla que se muestra cuando una transacción se actualiza correctamente.
 class FundsSuccessPage extends StatelessWidget {
+  /// Constructor sin parámetros para la pantalla de éxito.
   const FundsSuccessPage({super.key});
 
   @override
@@ -75,15 +86,18 @@ class FundsSuccessPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: Center(
+        // Contiene el contenido principal centrado verticalmente.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Ícono de éxito para indicar que la operación fue correcta.
             const Icon(
               Icons.check_circle_outline,
               color: Colors.white,
               size: 100,
             ),
             const SizedBox(height: 20),
+            // Título de la pantalla.
             const Text(
               '¡Transacción actualizada!',
               style: TextStyle(
@@ -93,11 +107,13 @@ class FundsSuccessPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            // Mensaje de confirmación de guardado.
             const Text(
               'Los cambios se guardaron correctamente.',
               style: TextStyle(color: Colors.white, fontSize: 14),
             ),
             const SizedBox(height: 50),
+            // Botón para volver al inicio de la aplicación.
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.tertiary,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/utils/db/db_category.dart';
 import 'package:myapp/utils/config/event_bus.dart';
 
+// Página para editar categorías (ingresos y gastos).
 class EditCategoriesPage extends StatefulWidget {
   const EditCategoriesPage({super.key});
 
@@ -10,17 +11,19 @@ class EditCategoriesPage extends StatefulWidget {
 }
 
 class _EditCategoriesPageState extends State<EditCategoriesPage> {
-  final TextEditingController _controller = TextEditingController();
-  String selectedType = 'ingresos';
+  final TextEditingController _controller = TextEditingController(); // Controlador para el campo de texto.
+  String selectedType = 'ingresos'; // Tipo de categoría seleccionada por defecto.
 
+  // Mapa que contiene listas de categorías divididas en ingresos y gastos.
   Map<String, List<String>> categories = {'ingresos': [], 'gastos': []};
 
   @override
   void initState() {
     super.initState();
-    _loadCategories();
+    _loadCategories(); // Cargar las categorías desde la base de datos al iniciar.
   }
 
+  // Método para cargar categorías desde la base de datos.
   Future<void> _loadCategories() async {
     final ingresos = await CategoryDatabase.instance.fetchCategories(
       'ingresos',
@@ -32,6 +35,7 @@ class _EditCategoriesPageState extends State<EditCategoriesPage> {
     });
   }
 
+  // Agrega una nueva categoría si es válida y no existe aún.
   Future<void> _addCategory() async {
     final newCategory = _controller.text.trim();
     if (newCategory.isNotEmpty &&
@@ -45,6 +49,7 @@ class _EditCategoriesPageState extends State<EditCategoriesPage> {
     }
   }
 
+  // Elimina una categoría seleccionada.
   Future<void> _deleteCategory(String category) async {
     await CategoryDatabase.instance.deleteCategory(category, selectedType);
     EventBus().notifyCategoriesUpdated();
@@ -69,6 +74,8 @@ class _EditCategoriesPageState extends State<EditCategoriesPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+
+            // Botones para alternar entre ingresos y gastos.
             ToggleButtons(
               isSelected: [
                 selectedType == 'ingresos',
@@ -106,6 +113,8 @@ class _EditCategoriesPageState extends State<EditCategoriesPage> {
               }),
             ),
             const SizedBox(height: 20),
+
+            // Campo de texto y botón para agregar categoría.
             Row(
               children: [
                 Expanded(
@@ -156,6 +165,8 @@ class _EditCategoriesPageState extends State<EditCategoriesPage> {
               ],
             ),
             const SizedBox(height: 20),
+
+            // Lista de categorías actuales.
             Expanded(
               child: ListView(
                 children:

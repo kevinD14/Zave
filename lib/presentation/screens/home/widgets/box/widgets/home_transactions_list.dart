@@ -6,6 +6,8 @@ import 'package:myapp/utils/config/format_dates.dart';
 import 'package:myapp/presentation/screens/transactions_all/details/transaction_detail_screen.dart';
 import 'package:myapp/utils/config/event_bus.dart';
 
+/// Widget de estado que muestra una lista de transacciones recientes,
+/// agrupadas por fecha y actualizadas automáticamente mediante EventBus.
 class TransactionsList extends StatefulWidget {
   const TransactionsList({super.key});
 
@@ -14,22 +16,23 @@ class TransactionsList extends StatefulWidget {
 }
 
 class _TransactionsListState extends State<TransactionsList> {
+  // Lista que contiene las transacciones cargadas desde la base de datos
   List<Map<String, dynamic>> _transactions = [];
 
   @override
   void initState() {
     super.initState();
-    _loadTransactions();
+    _loadTransactions(); // Carga inicial de transacciones
 
+    // Escucha eventos del EventBus para recargar la lista cuando haya cambios
     EventBus().onTransactionsUpdated.listen((_) {
       _loadTransactions();
     });
   }
 
+  /// Carga las últimas transacciones desde la base de datos
   Future<void> _loadTransactions() async {
-    final transactions = await TransactionDB().getLastTransactions(
-      limit: 10,
-    ); // Aumento el límite a 20
+    final transactions = await TransactionDB().getLastTransactions();
     if (!mounted) return;
     setState(() {
       _transactions = transactions;
@@ -41,14 +44,18 @@ class _TransactionsListState extends State<TransactionsList> {
     final brightness = Theme.of(context).brightness;
     final theme = Theme.of(context);
     final textColor = theme.textTheme.bodyLarge?.color;
+
+    // Construye el widget de lista
     return _buildTransactionList(context, brightness, textColor);
   }
 
+  /// Construye la lista de transacciones agrupadas por fecha
   Widget _buildTransactionList(
     BuildContext context,
     Brightness brightness,
     Color? textColor,
   ) {
+    // Si no hay transacciones, muestra un mensaje
     if (_transactions.isEmpty) {
       return Center(
         child: Text(
@@ -62,8 +69,10 @@ class _TransactionsListState extends State<TransactionsList> {
       );
     }
 
+    // Crea una copia de la lista original para ordenarla sin modificar el estado
     final transactions = List<Map<String, dynamic>>.from(_transactions);
 
+    // Ordena las transacciones por fecha (más recientes primero) y por ID si hay igualdad
     transactions.sort((a, b) {
       final dateA = DateFormat('dd/MM/yyyy').parse(a['date']);
       final dateB = DateFormat('dd/MM/yyyy').parse(b['date']);
@@ -75,16 +84,19 @@ class _TransactionsListState extends State<TransactionsList> {
       }
     });
 
+    // Limita la lista a un máximo de 10 transacciones
     if (transactions.length > 10) {
       transactions.removeRange(10, transactions.length);
     }
 
+    // Agrupa las transacciones por fecha
     final groupedTransactions = <String, List<Map<String, dynamic>>>{};
     for (var transaction in transactions) {
       final date = transaction['date'] ?? '';
       groupedTransactions.putIfAbsent(date, () => []).add(transaction);
     }
 
+    // Ordena las fechas de forma descendente
     final sortedDates =
         groupedTransactions.keys.toList()..sort((a, b) {
           final dateA = DateFormat('dd/MM/yyyy').parse(a);
@@ -92,6 +104,7 @@ class _TransactionsListState extends State<TransactionsList> {
           return dateB.compareTo(dateA);
         });
 
+    // Construye la lista visualmente usando ListView
     return ListView.builder(
       itemCount: sortedDates.length,
       itemBuilder: (context, index) {
@@ -109,7 +122,7 @@ class _TransactionsListState extends State<TransactionsList> {
                   vertical: 4.0,
                 ),
                 child: Text(
-                  formatDate(date),
+                  formatDate(date), // Usa función personalizada para formatear la fecha
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -117,6 +130,7 @@ class _TransactionsListState extends State<TransactionsList> {
                   ),
                 ),
               ),
+              // Muestra cada transacción del día
               ...dailyTransactions.map((transaction) {
                 final double amount = (transaction['amount'] as num).toDouble();
                 final String category =
@@ -125,6 +139,7 @@ class _TransactionsListState extends State<TransactionsList> {
 
                 return ListTile(
                   onTap: () {
+                    // Abre pantalla de detalles al tocar una transacción
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -135,6 +150,8 @@ class _TransactionsListState extends State<TransactionsList> {
                       ),
                     );
                   },
+
+                  // Icono de tipo de transacción
                   leading: SvgPicture.asset(
                     type == 'ingresos'
                         ? 'assets/icons/payments.svg'
@@ -148,6 +165,8 @@ class _TransactionsListState extends State<TransactionsList> {
                       BlendMode.srcIn,
                     ),
                   ),
+
+                  // Título según el tipo
                   title: Text(
                     type == 'ingresos'
                         ? 'Ingresos'
@@ -159,10 +178,14 @@ class _TransactionsListState extends State<TransactionsList> {
                       fontSize: 15,
                     ),
                   ),
+
+                  // Subtítulo con la categoría
                   subtitle: Text(
                     category,
                     style: TextStyle(fontSize: 14, color: textColor),
                   ),
+
+                  // Monto mostrado como positivo o negativo
                   trailing: Text(
                     '${type == 'ingresos' ? '+' : '-'}\$${amount.toStringAsFixed(2)}',
                     style: TextStyle(

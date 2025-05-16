@@ -7,6 +7,7 @@ import 'package:myapp/utils/db/db_helper_transactions.dart';
 import 'package:myapp/utils/theme/themes.dart';
 import 'package:myapp/utils/config/event_bus.dart';
 
+// Pantalla de configuración que permite al usuario cambiar temas, editar su nombre de usuario y eliminar transacciones
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -15,27 +16,32 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  // Variable para almacenar el tema actual seleccionado
   AppThemeOption _currentTheme = AppThemeOption.claroVerde;
 
   @override
   void initState() {
     super.initState();
+    // Cargar el tema guardado desde las preferencias del usuario
     _loadTheme();
   }
 
+  // Método que carga el tema guardado en las preferencias
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString('theme') ?? 'verde';
+    final saved = prefs.getString('theme') ?? 'verde'; // 'verde' es el valor por defecto
     setState(() {
+      // Asignamos el valor del tema en función del valor guardado
       _currentTheme =
           {
             'verde': AppThemeOption.claroVerde,
             'azul': AppThemeOption.claroAzul,
             'oscuro': AppThemeOption.oscuro,
-          }[saved]!;
+          }[saved]!; // Aseguramos que el valor exista en el mapa
     });
   }
 
+  // Método para guardar el tema seleccionado en las preferencias del usuario
   Future<void> _saveTheme(AppThemeOption theme) async {
     final prefs = await SharedPreferences.getInstance();
     final str =
@@ -43,10 +49,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           AppThemeOption.claroVerde: 'verde',
           AppThemeOption.claroAzul: 'azul',
           AppThemeOption.oscuro: 'oscuro',
-        }[theme]!;
-    await prefs.setString('theme', str);
+        }[theme]!; // Convierte el enum en string para guardar en preferencias
+    await prefs.setString('theme', str); // Guarda el tema seleccionado
   }
 
+  // Método para mostrar el diálogo de selección de tema
   void _selectTheme(BuildContext context) {
     showDialog(
       context: context,
@@ -89,6 +96,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // Método para mostrar el diálogo de edición de nombre de usuario
   void _editUsername(BuildContext context) {
     showDialog(
       context: context,
@@ -143,6 +151,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // Método para mostrar un cuadro de diálogo de confirmación de eliminación
   void _confirmDelete(
     BuildContext context,
     String title,
@@ -203,6 +212,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         body: ListView(
           padding: const EdgeInsets.all(24),
           children: [
+            // Opción editar nombre de usuario
             ListTile(
               leading: const Icon(Icons.person, color: Colors.white),
               title: const Text(
@@ -220,6 +230,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => _editUsername(context),
             ),
             const SizedBox(height: 32),
+
+            // Opciones de preferencias
             const Text(
               'Preferencias',
               style: TextStyle(
@@ -228,6 +240,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: Colors.white,
               ),
             ),
+
+            // Opción de cambiar tema de la app
             ListTile(
               leading: const Icon(Icons.brightness_6, color: Colors.white),
               title: const Text(
@@ -249,6 +263,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => _selectTheme(context),
             ),
             const SizedBox(height: 32),
+
+            // Opciones de datos de transacciones
             const Text(
               'Datos y almacenamiento',
               style: TextStyle(
@@ -257,6 +273,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: Colors.white,
               ),
             ),
+
+            // Opción de borrar todas las transacciones guardadas
             ListTile(
               leading: const Icon(Icons.delete_forever, color: Colors.white),
               title: const Text(
@@ -301,7 +319,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  'Zave v1.0.4 (17)',
+                  'Zave v1.0.5 (62)',
                   style: TextStyle(fontSize: 13, color: Colors.white54),
                 ),
               ),

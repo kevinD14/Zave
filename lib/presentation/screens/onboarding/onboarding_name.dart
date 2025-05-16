@@ -3,6 +3,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:myapp/utils/db/db_name.dart';
 import 'package:myapp/presentation/screens/onboarding/onboarding_initial_balance.dart';
 
+// Widget de estado para ingresar el nombre del usuario
 class NameScreen extends StatefulWidget {
   const NameScreen({super.key});
 
@@ -11,13 +12,14 @@ class NameScreen extends StatefulWidget {
 }
 
 class _NameScreenState extends State<NameScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  bool _isButtonEnabled = false;
+  final TextEditingController _nameController = TextEditingController(); // Controlador del campo de texto
+  bool _isButtonEnabled = false; // Controla si el botón "Continuar" está habilitado
 
+  // Guarda el nombre en la base de datos y navega a la siguiente pantalla
   Future<void> _saveNameAndNavigate() async {
     await db.saveName(_nameController.text);
 
-    if (!mounted) return;
+    if (!mounted) return; // Verifica que el widget esté aún montado
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const BalanceScreen()),
@@ -27,7 +29,7 @@ class _NameScreenState extends State<NameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: true, // Evita que el teclado cubra la vista
       backgroundColor: Theme.of(context).primaryColor,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -35,18 +37,22 @@ class _NameScreenState extends State<NameScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
               const SizedBox(height: 40),
               Icon(
                 Icons.question_mark,
                 color: Theme.of(context).colorScheme.tertiary,
                 size: 50,
               ),
+
               const SizedBox(height: 10),
               Image.asset(
                 'assets/logo/cerdito_feliz.png',
                 height: 150,
                 width: 150,
               ),
+
+              // Texto animado con efecto de máquina de escribir
               const SizedBox(height: 30),
               DefaultTextStyle(
                 style: const TextStyle(
@@ -66,15 +72,18 @@ class _NameScreenState extends State<NameScreen> {
                 ),
               ),
               const SizedBox(height: 30),
+
+              // Campo de texto para ingresar el nombre
               TextField(
                 controller: _nameController,
-                maxLength: 12,
+                maxLength: 12, // Longitud máxima del nombre
                 cursorColor: Theme.of(context).textTheme.bodyLarge?.color,
                 style: TextStyle(
                   color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.bold,
                 ),
                 onChanged: (value) {
+                  // Activa o desactiva el botón dependiendo si hay texto
                   setState(() {
                     _isButtonEnabled = value.trim().isNotEmpty;
                   });
@@ -96,6 +105,8 @@ class _NameScreenState extends State<NameScreen> {
                 ),
               ),
               const SizedBox(height: 30),
+
+              // Botón "Continuar"
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

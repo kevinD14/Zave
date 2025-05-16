@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Widget personalizado para la AppBar de la pantalla de opciones
 class CustomOptionsAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   const CustomOptionsAppBar({super.key});

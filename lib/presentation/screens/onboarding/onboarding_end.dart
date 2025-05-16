@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myapp/utils/db/db_category.dart';
 import 'package:myapp/presentation/screens/home/home_page.dart';
 
+// Clase que representa la última pantalla del onboarding
 class OnboardingPageEnd extends StatelessWidget {
   const OnboardingPageEnd({super.key});
 
@@ -44,6 +45,7 @@ class OnboardingPageEnd extends StatelessWidget {
               ),
               const Spacer(),
               ElevatedButton(
+                // Botón que finaliza el onboarding
                 onPressed: () => _completeOnboarding(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.tertiary,
@@ -68,20 +70,25 @@ class OnboardingPageEnd extends StatelessWidget {
     );
   }
 
+  // Función privada que se ejecuta al finalizar el onboarding
   void _completeOnboarding(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    final db = CategoryDatabase.instance;
+    final prefs = await SharedPreferences.getInstance(); // Accede a las preferencias del usuario
+    final db = CategoryDatabase.instance; // Instancia de la base de datos de categorías
 
+    // Verifica si las categorías predeterminadas ya se insertaron
     final inserted = prefs.getBool('defaultCategoriesInserted') ?? false;
-
     if (!inserted) {
       await db.insertDefaultCategoriesIfEmpty();
       await prefs.setBool('defaultCategoriesInserted', true);
     }
 
+    // Marca que el usuario ya ha visto el onboarding
     await prefs.setBool('seenOnboarding', true);
 
+    // Si el contexto ya no está montado, no hace nada
     if (!context.mounted) return;
+
+    // Reemplaza la pantalla actual por la pantalla principal (HomePage)
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => HomePage()),

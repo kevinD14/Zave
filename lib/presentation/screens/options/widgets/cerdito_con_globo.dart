@@ -2,9 +2,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
+// Widget que muestra un cerdito con un globo que contiene una frase aleatoria animada
 class CerditoConGlobo extends StatelessWidget {
   const CerditoConGlobo({super.key});
 
+  // Lista de frases divertidas y financieras que se mostrarán aleatoriamente
   final List<String> frases = const [
     "¿Otra vez arroz con huevo?",
     "Si ahorro más, ¿me convierto en millonario?",
@@ -58,8 +60,9 @@ class CerditoConGlobo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final random = Random();
-    final fraseElegida = frases[random.nextInt(frases.length)];
+    final random = Random(); // Generador de números aleatorios
+    final fraseElegida =
+        frases[random.nextInt(frases.length)]; // Selección aleatoria de frase
 
     return Container(
       width: double.infinity,

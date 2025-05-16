@@ -4,12 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myapp/utils/db/db_category.dart';
 import 'package:myapp/presentation/screens/onboarding/onboarding_name.dart';
 
+// Widget principal de la pantalla de introducción (Onboarding)
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
+      // Personaliza la apariencia de la barra de estado y navegación
       value: SystemUiOverlayStyle(
         statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
         statusBarIconBrightness: Brightness.light,
@@ -22,7 +24,9 @@ class OnboardingPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Spacer(),
+              const Spacer(), // Espacio flexible superior
+
+              // Círculo decorativo con imagen centrada
               Stack(
                 alignment: Alignment.center,
                 children: [
@@ -42,6 +46,8 @@ class OnboardingPage extends StatelessWidget {
                 ],
               ),
               const Spacer(),
+
+              // Botón para iniciar el onboarding
               ElevatedButton(
                 onPressed: () => _completeOnboarding(context),
                 style: ElevatedButton.styleFrom(
@@ -73,17 +79,19 @@ class OnboardingPage extends StatelessWidget {
     );
   }
 
+  // Función que se ejecuta al presionar "Iniciar"
   void _completeOnboarding(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final db = CategoryDatabase.instance;
 
+    // Inserta las categorías por defecto si aún no se han insertado
     final inserted = prefs.getBool('defaultCategoriesInserted') ?? false;
-
     if (!inserted) {
       await db.insertDefaultCategoriesIfEmpty();
       await prefs.setBool('defaultCategoriesInserted', true);
     }
 
+     // Si el contexto aún está montado, se navega a la siguiente pantalla del onboarding
     if (!context.mounted) return;
     Navigator.pushReplacement(
       context,

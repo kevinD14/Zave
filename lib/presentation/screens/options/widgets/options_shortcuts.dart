@@ -6,10 +6,11 @@ import 'package:myapp/presentation/screens/options/Settings/settings_screen.dart
 import 'package:myapp/presentation/screens/options/categories/edit_categories_screen.dart';
 import 'package:myapp/presentation/screens/options/debts/debts_screen.dart';
 import 'package:myapp/presentation/screens/options/summary/summary_screen.dart';
+import 'package:myapp/presentation/screens/options/backup/backups_screen.dart';
 
+// Widget que muestra accesos directos a diferentes pantallas de opciones
 class OptionsShortcuts extends StatefulWidget {
-  final VoidCallback? onSettingsChanged;
-  const OptionsShortcuts({super.key, this.onSettingsChanged});
+  const OptionsShortcuts({super.key});
 
   @override
   State<OptionsShortcuts> createState() => _OptionsShortcutsState();
@@ -23,30 +24,29 @@ class _OptionsShortcutsState extends State<OptionsShortcuts> {
       child: SingleChildScrollView(
         child: Column(
           children: [
+            // Fila con 3 accesos directos
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                // Atajo para ir a la pantalla de deudas
                 Flexible(
                   child: ShortcutBox(
                     label: 'Gestionar\ndeudas',
                     iconPath: 'assets/icons/debt.svg',
                     onTap: () async {
                       HapticFeedback.lightImpact();
-                      final result = await Navigator.push(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const DebtScreen(),
                         ),
                       );
-                      if (result == true) {
-                        setState(
-                          () {},
-                        );
-                      }
                     },
                   ),
                 ),
                 SizedBox(width: 10),
+
+                // Atajo para ir a la pantalla de resumen
                 Flexible(
                   child: ShortcutBox(
                     label: 'Resumen\ncompleto',
@@ -63,6 +63,8 @@ class _OptionsShortcutsState extends State<OptionsShortcuts> {
                   ),
                 ),
                 SizedBox(width: 10),
+
+                // Atajo para editar categorías
                 Flexible(
                   child: ShortcutBox(
                     label: 'Editar\nCategorias',
@@ -81,22 +83,35 @@ class _OptionsShortcutsState extends State<OptionsShortcuts> {
               ],
             ),
             const SizedBox(height: 24),
+
+            // Segunda fila con 2 accesos directos
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Flexible(
+                // Atajo para ir a la pantalla de respaldo de datos
+                Expanded(
+                  child: ShortcutBox(
+                    label: 'Respaldo\nde datos',
+                    iconPath: 'assets/icons/backup.svg',
+                    onTap: () async {
+                      HapticFeedback.lightImpact();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BackupsPage()),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(width: 10),
+
+                // Atajo para ir a los ajustes de la app
+                Expanded(
                   child: ShortcutBox(
                     label: 'Ajustes\nde la app',
                     iconPath: 'assets/icons/settings.svg',
                     onTap: () async {
                       HapticFeedback.lightImpact();
-                      final result = await Navigator.push(
-                        context,
-                        transition(SettingsScreen()),
-                      );
-                      if (result == true && context.mounted) {
-                        widget.onSettingsChanged!();
-                      }
+                      Navigator.push(context, transition(SettingsScreen()));
                     },
                   ),
                 ),

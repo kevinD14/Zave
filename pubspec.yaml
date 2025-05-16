@@ -2,7 +2,7 @@ name: myapp
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 1.0.4+1
+version: 1.0.5+1
 
 environment:
   sdk: ^3.8.0-278.1.beta
@@ -17,12 +17,20 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2
-  fl_chart: ^0.71.0
-  pie_chart: ^5.4.0
+  fl_chart: ^1.0.0
   animated_text_kit: ^4.2.3
   event_bus: ^2.0.1
   animations: ^2.0.11
   cupertino_icons: ^1.0.8
+  firebase_core: ^3.13.0
+  google_sign_in: ^6.3.0
+  firebase_auth: ^5.5.3
+  googleapis: ^14.0.0
+  googleapis_auth: ^2.0.0
+  path_provider: ^2.1.5
+  http: ^1.4.0
+  permission_handler: ^12.0.0+1
+  connectivity_plus: ^6.1.4
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +48,8 @@ flutter:
     - assets/logo/cerdito_feliz_brillo.png
     - assets/logo/cerdito_triste.png
     - assets/logo/cerdito_cool.png
+    - assets/logo/google.png
+    - assets/logo/drive.png
     - 'assets/icons/options.svg'
     - 'assets/icons/pay.svg'
     - 'assets/icons/paid.svg'
@@ -53,6 +63,8 @@ flutter:
     - 'assets/icons/debt.svg'
     - 'assets/icons/saving.svg'
     - 'assets/icons/notifications.svg'
+    - 'assets/icons/backup.svg'
+
 
 flutter_launcher_icons:
   android: "launcher_icon"

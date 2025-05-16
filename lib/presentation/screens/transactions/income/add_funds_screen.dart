@@ -12,6 +12,7 @@ import 'package:myapp/presentation/screens/transactions/income/funds_confirmatio
 import 'package:myapp/presentation/screens/transactions/funds_rejected_page.dart';
 import 'package:myapp/presentation/screens/options/categories/edit_categories_screen.dart';
 
+// Pantalla para añadir transacciones de tipo "ingresos"
 class AddFundsPage extends StatefulWidget {
   const AddFundsPage({super.key});
 
@@ -20,17 +21,26 @@ class AddFundsPage extends StatefulWidget {
 }
 
 class _AddFundsPageState extends State<AddFundsPage> {
+  // Controlador para el campo de monto ingresado.
   final TextEditingController _amountController = TextEditingController();
+  // Controlador para la descripción de la transacción.
   final TextEditingController _descriptionController = TextEditingController();
+  // Suscripción para escuchar actualizaciones de las categorías.
   StreamSubscription? _categorySubscription;
+  // Categoría seleccionada por el usuario.
   String? _selectedCategory;
+  // Fecha seleccionada para la transacción (por defecto es hoy).
   DateTime? _selectedDate;
+  // Indica si el botón de confirmar está habilitado.
   bool _isButtonEnabled = false;
 
+  // Lista de categorías disponibles para seleccionar.
   List<String> _categories = [];
 
   @override
   void initState() {
+    // Inicialización de controladores y valores por defecto
+
     super.initState();
     _amountController.addListener(_updateButtonState);
     _selectedDate = DateTime.now();
@@ -103,7 +113,7 @@ class _AddFundsPageState extends State<AddFundsPage> {
           children: [
             const SizedBox(height: 20),
             const Text(
-              'Añadir fondos',
+              'Añadir ingreso',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
@@ -158,12 +168,9 @@ class _AddFundsPageState extends State<AddFundsPage> {
         ),
         prefixIcon: Icon(
           Icons.attach_money,
-          color:
-              _isButtonEnabled
-                  ? Theme.of(context).textTheme.bodyLarge?.color
-                  : Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.color?.withAlpha(150),
+          color: _isButtonEnabled
+              ? Theme.of(context).textTheme.bodyLarge?.color
+              : Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -214,15 +221,16 @@ class _AddFundsPageState extends State<AddFundsPage> {
               value: _selectedCategory,
               borderRadius: BorderRadius.circular(15),
               dropdownColor: Theme.of(context).colorScheme.secondary,
-              iconEnabledColor:
-                  _selectedCategory == null
-                      ? Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150)
-                      : Theme.of(context).textTheme.bodyLarge?.color,
+              iconEnabledColor: _selectedCategory == null
+                  ? Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150)
+                  : Theme.of(context).textTheme.bodyLarge?.color,
               decoration: const InputDecoration(border: InputBorder.none),
               hint: Text(
                 'Selecciona una categoría',
                 style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge?.color?.withAlpha(150),
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.color?.withAlpha(150),
                 ),
               ),
               style: TextStyle(
@@ -247,10 +255,14 @@ class _AddFundsPageState extends State<AddFundsPage> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: Icon(Icons.add, size: 20, color: Theme.of(context).textTheme.bodyLarge?.color,),
+            icon: Icon(
+              Icons.add,
+              size: 20,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
             padding: EdgeInsets.zero,
             splashColor: Colors.transparent,
-            highlightColor: Colors.transparent, 
+            highlightColor: Colors.transparent,
             onPressed: () {
               Navigator.push(
                 context,
@@ -298,10 +310,9 @@ class _AddFundsPageState extends State<AddFundsPage> {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              _isButtonEnabled
-                  ? Theme.of(context).colorScheme.tertiary
-                  : Colors.grey.shade400,
+          backgroundColor: _isButtonEnabled
+              ? Theme.of(context).colorScheme.tertiary
+              : Colors.grey.shade400,
           padding: const EdgeInsets.symmetric(vertical: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -311,10 +322,9 @@ class _AddFundsPageState extends State<AddFundsPage> {
         child: Text(
           'Registrar ingreso',
           style: TextStyle(
-            color:
-                _isButtonEnabled
-                    ? Colors.black
-                    : Colors.grey.shade400.withAlpha(150),
+            color: _isButtonEnabled
+                ? Colors.black
+                : Colors.grey.shade400.withAlpha(150),
             fontSize: 24,
           ),
         ),
@@ -335,10 +345,9 @@ class _AddFundsPageState extends State<AddFundsPage> {
       'dd/MM/yyyy',
     ).format(_selectedDate ?? now);
 
-    final String description =
-        _descriptionController.text.trim().isEmpty
-            ? 'Ingreso sin descripción'
-            : _descriptionController.text.trim();
+    final String description = _descriptionController.text.trim().isEmpty
+        ? 'Ingreso sin descripción'
+        : _descriptionController.text.trim();
 
     final allTransactions = await TransactionDB().getAllTransactions();
 
